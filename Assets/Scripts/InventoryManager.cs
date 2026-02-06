@@ -115,6 +115,10 @@ public class InventoryManager : MonoBehaviour
             {
                 filteredItemDataList.Add(sourceItemData);
             }
+            else
+            {
+                HotBarManager.Instance.RefreshDisplay();
+            }
         }
         
         return filteredItemDataList;
@@ -126,6 +130,8 @@ public class InventoryManager : MonoBehaviour
     public void UpdateCurrentDataContainer()
     {
         if(!dataContainerDic.TryGetValue(currentDataContainerType, out ItemDataContainer dataContainer)) return;
+        
+        if(currentDataContainerType == ItemScriptableObject.ItemType.All) UpdateAllContainerReferences();
         
         List<ItemData> displayData = GetFilteredDisplayData(dataContainer.itemDataList);
         
@@ -195,4 +201,13 @@ public class InventoryManager : MonoBehaviour
         return dataContainerDic.GetValueOrDefault(currentDataContainerType);
     }
     
+    /// <summary>
+    /// 获取指定类型容器
+    /// </summary>
+    /// <param name="itemType">物品类型</param>
+    /// <returns></returns>
+    public ItemDataContainer GetDataContainer(ItemScriptableObject.ItemType  itemType)
+    {
+        return dataContainerDic.GetValueOrDefault(itemType);
+    }
 }

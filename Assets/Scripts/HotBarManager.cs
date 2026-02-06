@@ -106,28 +106,15 @@ public class HotBarManager : MonoBehaviour
         return hotBarItemDataSet;
     }
     
-    /// <summary>
-    /// 获取快捷栏的全部物品数据
-    /// </summary>
-    /// <returns></returns>
-    public List<ItemData> GetAllHotBarData()
-    {
-        return hotBarItemData;
-    }
-    
     public void RefreshDisplay()
     {
-        if (HotBarManager.Instance == null) return;
-        
-        List<ItemData> hotBarItems = HotBarManager.Instance.GetAllHotBarData();
-        
         for (int i = 0; i < hotBarSlots.Length; i++)
         {
             if (hotBarSlots[i] == null) continue;
             
-            if (i < hotBarItems.Count)
+            if (i < hotBarItemData.Count)
             {
-                hotBarSlots[i].SetData(hotBarItems[i]);
+                hotBarSlots[i].SetData(hotBarItemData[i]);
             }
             else
             {

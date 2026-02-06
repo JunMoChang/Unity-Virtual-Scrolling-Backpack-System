@@ -127,7 +127,8 @@ public class ItemSlotView : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
         currentData.isFull = false;
         if (currentData.storageItemQuantity <= 0)
         {
-            InventoryManager.Instance.GetCurrentDataContainer().RemoveItem(currentData);
+            InventoryManager.Instance.GetDataContainer(currentData.itemSo.itemType).RemoveItem(currentData);
+            
             currentData.EmptySlot();
             currentData = null;
         }
@@ -153,7 +154,7 @@ public class ItemSlotView : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
             currentData.isFull = false;
             if (currentData.storageItemQuantity <= 0)
             {
-                InventoryManager.Instance.GetCurrentDataContainer().RemoveItem(currentData);
+                InventoryManager.Instance.GetDataContainer(currentData.itemSo.itemType).RemoveItem(currentData);
                 currentData.EmptySlot();
                 currentData = null;
             }
