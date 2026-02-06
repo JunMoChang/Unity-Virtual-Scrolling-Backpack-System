@@ -8,7 +8,7 @@ public class ItemDataContainer
 {
     public readonly ItemScriptableObject.ItemType itemType;
     public readonly List<ItemData> itemDataList;
-    private readonly int defaultDataCapacity = 30;
+    private readonly int defaultDataCapacity = 50;
     public ItemDataContainer(ItemScriptableObject.ItemType type)
     {
         itemDataList =  new List<ItemData>(defaultDataCapacity);

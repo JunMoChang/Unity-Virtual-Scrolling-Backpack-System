@@ -29,18 +29,13 @@ public class SlotsScrollView : MonoBehaviour
         
         Initialize();
     }
-
-    private void Start()
-    {
-        RefreshVisibleSlots();
-    }
-
+    
     private void Initialize()
     {
         cellHeight = cellSize.y + spacing.y;
         cellWidth =  cellSize.x + spacing.x;
         
-        poolSize = (Mathf.CeilToInt(contentRect.rect.height / cellHeight) + 1) * columnCount ;
+        poolSize = (Mathf.CeilToInt(scrollRect.viewport.rect.height / cellHeight) + 1) * columnCount ;
         for (int i = 0; i < poolSize; i++)
         {
             GameObject slotObj = Instantiate(slotPrefab, contentRect);
@@ -53,44 +48,61 @@ public class SlotsScrollView : MonoBehaviour
             
             ItemSlotView slotView = slotObj.GetComponent<ItemSlotView>();
             slotPool.Add(slotView);
+            DisplaySingleSlot(slotView, i);
         }
     }
     
     public void SetData(List<ItemData> currentData, int dataContainerCapacity)
     {
-        displayDaraList = currentData ;
+        displayDaraList = currentData;
         
         SetContentSize(dataContainerCapacity);
         
         contentRect.anchoredPosition = new Vector2(contentRect.anchoredPosition.x, 0);
         lastStartRow = -1;
+        
         RefreshVisibleSlots();
     }
     
     private void RefreshVisibleSlots()
     {
-        if (!gameObject.activeInHierarchy || slotPool.Count == 0) return;
+        if (!gameObject.activeInHierarchy && slotPool.Count == 0) return;
 
         float scrollY = contentRect.anchoredPosition.y; 
-        int startRow = Mathf.FloorToInt(Mathf.Max(0, scrollY) / cellHeight);
+        int startRow = Mathf.FloorToInt(scrollY / cellHeight);
         
-        if (startRow == lastStartRow) return;
+        if (startRow == lastStartRow && scrollY != 0) return;
         
+        int endRow = Mathf.CeilToInt((scrollY + scrollRect.viewport.rect.height) / cellHeight);
+
         lastStartRow = startRow;
         int startIndex = startRow * columnCount;
         for (int i = 0; i < slotPool.Count; i++)
         {
-            int displayIndex = startIndex + i;
+            int dataIndex = startIndex + i;
             ItemSlotView slotView = slotPool[i];
-            DisplaySingleSlot(slotView, displayIndex);
-            if (displayIndex >= 0 && displayIndex < displayDaraList.Count)
+            
+            int dataRow = dataIndex / columnCount;
+            
+            DisplaySingleSlot(slotView, dataIndex);
+            bool isInViewport = dataRow < endRow;
+            if (isInViewport)
             {
-                slotView.SetData(displayDaraList[displayIndex]);
+                slotView.gameObject.SetActive(true);
+                if (dataIndex < displayDaraList.Count)
+                {
+                    slotView.SetData(displayDaraList[dataIndex]);
+                }
+                else
+                {
+                    slotView.ClearData();
+                }
             }
             else
             {
-                slotView.ClearData();
+                slotView.gameObject.SetActive(false);
             }
+            
         }
     }
 
@@ -116,7 +128,7 @@ public class SlotsScrollView : MonoBehaviour
         float y = -cellHeight * row;
         
         rt.anchoredPosition = new Vector2(x, y);
-        rt.sizeDelta = cellSize;
+        
         slotView.gameObject.SetActive(true);
     }
     

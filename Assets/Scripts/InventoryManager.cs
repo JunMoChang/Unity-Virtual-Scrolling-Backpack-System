@@ -54,8 +54,8 @@ public class InventoryManager : MonoBehaviour
             
             if (menuActivated)
             {
-                List<ItemData> slotData = GetCurrentDataContainer().itemDataList;
-                scrollView.SetData(slotData, slotData.Capacity);
+                List<ItemData> slotsData = GetCurrentDataContainer().itemDataList;
+                scrollView.SetData(slotsData, slotsData.Capacity);
             }
         }
     }
@@ -76,7 +76,8 @@ public class InventoryManager : MonoBehaviour
         int extraItem = dataContainer.AddItem(itemSo, quantity);
         
         UpdateAllContainerReferences();
-        if(itemSo.itemType == currentDataContainerType) UpdateCurrentDataContainer();
+        if(itemSo.itemType == currentDataContainerType || currentDataContainerType == ItemScriptableObject.ItemType.All) 
+            UpdateCurrentDataContainer();
         
         return extraItem;
     }

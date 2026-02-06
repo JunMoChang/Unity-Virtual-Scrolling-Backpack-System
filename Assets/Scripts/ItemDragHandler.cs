@@ -34,7 +34,7 @@ public class ItemDragHandler :  MonoBehaviour
     {
         ItemSlotView targetSlot = GetHotBarSlotUnderMouse(eventData);
         
-        if (targetSlot != null)
+        if (currentDragSlot != null && targetSlot != null)
         {
             switch (targetSlot.slotType)
             {
