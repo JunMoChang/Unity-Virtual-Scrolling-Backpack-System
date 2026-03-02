@@ -87,6 +87,7 @@ GameObject:
   - component: {fileID: 8706672221552383694}
   - component: {fileID: 5106545120879466379}
   - component: {fileID: 3369865526045184559}
+  - component: {fileID: -1238853134538400403}
   m_Layer: 5
   m_Name: itemSlot
   m_TagString: Untagged
@@ -170,9 +171,21 @@ MonoBehaviour:
   itemImage: {fileID: 8094717767841061751}
   selectedPanel: {fileID: 939655155863123563}
   defaultItemSlotSprite: {fileID: 21300000, guid: 70c500e3f9a702743946d084c36b42c6, type: 3}
-  rectTransform: {fileID: 5980566744404738426}
   slotType: 0
-  hotBarIndex: 0
+  slotIndex: 0
+  isSelected: 0
+--- !u!114 &-1238853134538400403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4560058102665585785}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ce2d32e8b0f4e40a9330e23b08f7200, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5391215721657926760
 GameObject:
   m_ObjectHideFlags: 0
