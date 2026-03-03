@@ -171,6 +171,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   quantity: 33
   itemSo: {fileID: 11400000, guid: ea71b39d82e2ffb48941e00aa33e5c7c, type: 2}
+  inventoryController: {fileID: 1413986841}
 --- !u!50 &188286526
 Rigidbody2D:
   serializedVersion: 4
@@ -292,6 +293,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   quantity: 1
   itemSo: {fileID: 11400000, guid: 323264dd48c2caf4b89c342b39f62c9e, type: 2}
+  inventoryController: {fileID: 1413986841}
 --- !u!50 &262095445
 Rigidbody2D:
   serializedVersion: 4
@@ -413,6 +415,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   quantity: 100
   itemSo: {fileID: 11400000, guid: 44dd03777658a1349a52e689387edf2f, type: 2}
+  inventoryController: {fileID: 1413986841}
 --- !u!50 &382568969
 Rigidbody2D:
   serializedVersion: 4
@@ -1433,6 +1436,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   quantity: 600
   itemSo: {fileID: 11400000, guid: 1086cea02c50918468645f1d4cbe955d, type: 2}
+  inventoryController: {fileID: 1413986841}
 --- !u!50 &1002016485
 Rigidbody2D:
   serializedVersion: 4
@@ -1769,6 +1773,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   quantity: 77
   itemSo: {fileID: 11400000, guid: 694295cb1bd6ac842850c768122f68fd, type: 2}
+  inventoryController: {fileID: 1413986841}
 --- !u!50 &1191039538
 Rigidbody2D:
   serializedVersion: 4
@@ -1917,6 +1922,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   quantity: 4
   itemSo: {fileID: 11400000, guid: 4c58d54b2a2244d4a8103046dd341db5, type: 2}
+  inventoryController: {fileID: 1413986841}
 --- !u!50 &1384089687
 Rigidbody2D:
   serializedVersion: 4
@@ -2060,6 +2066,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   quantity: 1
   itemSo: {fileID: 11400000, guid: e33bee5d50d30e34fb801a1eadec31d2, type: 2}
+  inventoryController: {fileID: 1413986841}
 --- !u!61 &1464120381
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2201,6 +2208,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   quantity: 100
   itemSo: {fileID: 11400000, guid: c6a94daac1a777d40aeceabc6a5ccc68, type: 2}
+  inventoryController: {fileID: 1413986841}
 --- !u!50 &1465502443
 Rigidbody2D:
   serializedVersion: 4
@@ -2306,6 +2314,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   quantity: 2
   itemSo: {fileID: 11400000, guid: 5a2235b15b932c84ab2f03d3c456ea24, type: 2}
+  inventoryController: {fileID: 1413986841}
 --- !u!50 &1545729067
 Rigidbody2D:
   serializedVersion: 4
@@ -2443,6 +2452,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   quantity: 83
   itemSo: {fileID: 11400000, guid: 251877d85e84a9e48bf94a7c34b90b0e, type: 2}
+  inventoryController: {fileID: 1413986841}
 --- !u!50 &1632865423
 Rigidbody2D:
   serializedVersion: 4
@@ -2720,6 +2730,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   quantity: 3
   itemSo: {fileID: 11400000, guid: 1a3263955e9379e4c90fd0175578123f, type: 2}
+  inventoryController: {fileID: 1413986841}
 --- !u!50 &2045872687
 Rigidbody2D:
   serializedVersion: 4

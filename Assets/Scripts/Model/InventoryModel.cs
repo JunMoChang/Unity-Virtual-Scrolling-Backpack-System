@@ -158,7 +158,7 @@ namespace Model
                     items.Sort((a, b) => ascending ? a.ItemSo.itemType.CompareTo(b.ItemSo.itemType) : b.ItemSo.itemType.CompareTo(a.ItemSo.itemType));
                     break;
                 case ItemSortType.Name:
-                    items.Sort((a, b) => ascending ? String.Compare(a.ItemSo.itemName, b.ItemSo.itemName, StringComparison.Ordinal) : b.ItemSo.itemName.CompareTo(a));
+                    items.Sort((a, b) => ascending ? String.Compare(a.ItemSo.itemName, b.ItemSo.itemName, StringComparison.Ordinal) : String.Compare(b.ItemSo.itemName, a.ItemSo.itemName, StringComparison.Ordinal));
                     break;
             }
 
