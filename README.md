@@ -1,305 +1,89 @@
-# Unity Inventory System  [English](README.md) | [中文](README_CN.md)
+# 背包系统 [中文](README.md) | [English](README_EN.md)
 
-A feature-rich inventory management system for Unity games with hotbar support, drag-and-drop functionality, and flexible item categorization.
+---
 
 [TOC]
+---
 
 
+### 概述
 
-## Features
+本系统是一个基于 Unity 的模块化**背包与快捷栏系统**，采用 **MVC（模型-视图-控制器）** 架构设计。支持物品存储、分类浏览、排序、拖拽操作（背包与快捷栏之间）、物品使用及丢弃至游戏世界等功能。
 
-### Core Functionality
-- **Multi-category Inventory**: Organize items by type (Weapon, Consumable, Material, Other)
-- **Hotbar System**: Quick access bar with 8 slots for frequently used items
-- **Drag & Drop**: Intuitive item management through drag-and-drop interface
-- **Item Stacking**: Automatic stacking of identical items up to max stack size
-- **Sorting Options**: Sort by quantity, rarity, type, or name (ascending/descending)
-- **Virtual Scrolling**: Efficient rendering for large inventories using object pooling
+---
 
-### UI Features
-- Real-time item information display (name, description, sprite)
-- Visual feedback for selected items
-- Empty slot placeholders
-- Quantity indicators
-- Category filtering buttons
+### 架构说明
 
-## System Architecture
+系统分为三层：
 
-### Main Components
+**Model（数据层）** — 纯数据逻辑，不依赖 Unity。
 
-#### InventoryManager
-Central controller for the inventory system.
+- `InventoryModel` — 管理按物品类型分类存储的物品数据，处理添加、移除、使用和丢弃逻辑。
+- `HotBarModel` — 管理 8 个快捷栏槽位的数据，支持添加、移除和交换操作。
+- `ItemDataModel` — 表示单个物品堆叠，记录 ScriptableObject 引用、当前数量和最大叠加数量。
 
-**Key Responsibilities:**
-- Manages item data containers for different categories
-- Handles category switching and UI updates
-- Coordinates between inventory and hotbar systems
-- Displays item information panel
+**View（视图层）** — 处理所有 UI 渲染与显示逻辑。
 
-**Public Methods:**
-```csharp
-int AddItem(ItemScriptableObject itemSo, int quantity)
-void UpdateCurrentDataContainer()
-ItemDataContainer GetCurrentDataContainer()
-void SetCurrentSelectedSlot(ItemSlotView slotView)
+- `InventoryView` — 渲染背包面板与物品描述信息，并从背包列表中过滤掉已在快捷栏中的物品。
+- `HotBarView` — 渲染 8 个快捷栏槽位，监听 Model 数据变更事件。
+- `ItemSlotView` — 单个 UI 格子，绑定 `ItemDataModel`，同步更新图标、数量文本和选中状态。
+- `SlotsScrollView` — 背包网格的虚拟化滚动列表，仅渲染可见格子以保证性能。
+
+**Controller（控制层）** — 连接 Model 和 View，处理用户输入。
+- `InventoryController` — 处理键盘开关（E 键）、分类切换、排序、物品使用、丢弃和格子选中逻辑。
+- `HotBarController` — 处理快捷栏的所有操作，包括添加、移除、交换和拖拽落点解析。
+- `ItemDragController` — 单例。管理拖拽 UX：创建浮动拖拽图像、追踪鼠标位置、解析放置目标。
+- `ItemInteractionController` — 挂载于每个 `ItemSlotView`，处理左键（选中/使用）、右键（丢弃）和拖拽事件。
+
+**入口**
+
+- `GameManager` — 实例化两个 Model，通过 `Initialize()` 方法将其注入所有控制器。
+
+---
+
+### 主要功能
+
+| 功能 | 说明 |
+|---|---|
+| 物品分类 | 物品按类型分类存储（消耗品、装备等），支持"全部"视图。 |
+| 排序 | 支持按默认顺序、数量、稀有度、类型、名称排序，可切换升序/降序。 |
+| 快捷栏 | 8 个快捷栏格子。拖入快捷栏的物品将从背包列表中隐藏。 |
+| 拖拽操作 | 支持在背包与快捷栏之间拖拽物品，也支持快捷栏内格子互换。 |
+| 物品使用 | 在已选中的格子上左键单击即可使用物品，消耗品数量减少，耗尽后自动移除。 |
+| 物品丢弃 | 在已选中的格子上右键单击可将物品丢入游戏世界，生成带物理组件的实体对象。 |
+| 虚拟化滚动 | 背包滚动视图仅渲染可见格子对象，在大容量背包下依然保持流畅性能。 |
+| 事件驱动 UI | Model 广播数据变更事件，View 按需监听并刷新，避免不必要的全量更新。 |
+
+---
+
+### 数据流向
+
+```
+GameManager
+  └── 创建 InventoryModel + HotBarModel
+        └── 注入 InventoryController、HotBarController
+              └── 绑定 InventoryView、HotBarView
+                    └── ItemSlotView（每个格子）
+                          └── ItemInteractionController（每个格子）
+                                └── ItemDragController（单例）
 ```
 
-#### HotBarManager
-Manages the quick-access hotbar with 8 slots.
+---
 
-**Key Responsibilities:**
-- Maintains hotbar item references
-- Handles item addition/removal from hotbar
-- Swaps items between hotbar slots
-- Syncs with inventory system
+### 配置步骤
 
-**Public Methods:**
-```csharp
-bool AddToHotBar(ItemData itemData, int slotIndex)
-bool AddToHotBar(ItemSlotView sourceSlot, ItemSlotView hotBarSlot)
-void RemoveFromHotBar(int slotIndex)
-HashSet<ItemData> GetHotBarDataSet()
-List<ItemData> GetAllHotBarData()
-void RefreshDisplay()
-```
+1. 在场景中放置 `GameManager`，在 Inspector 中指定 `InventoryController`、`HotBarController`、`ItemDragController` 的引用。
+2. 将 `InventoryView` 指定给 `InventoryController`，将 `HotBarView` 指定给 `HotBarController`。
+3. 将 `Canvas` 和 `dragItemPrefab`（一个简单的 Image GameObject）指定给 `ItemDragController`。
+4. 在 `InventoryController` 中指定分类按钮组、排序下拉框和排序方向按钮。
+5. 每个 `ItemSlotView` 预制体上应挂载 `ItemInteractionController` 组件。
+6. 为每种物品创建 `ItemScriptableObject` 资产，填写 `itemType`、`itemName`、`itemSprite`、`itemMaxSuperposition`、`itemRarity`、`itemDescription` 字段。
 
-#### ItemDataContainer
-Stores and manages items for a specific category.
+---
 
-**Key Features:**
-- Default capacity: 30 items
-- Automatic stack management
-- Full inventory detection
+### 注意事项与已知行为
 
-**Public Methods:**
-```csharp
-int AddItem(ItemScriptableObject itemSo, int quantity)
-void RemoveItem(ItemData data)
-void SetDataCapacity(int maxCapacity)
-```
+- 已加入快捷栏的物品将**从背包面板中隐藏**，避免 UI 重复显示。
+- 快捷栏保存的是 `ItemDataModel` 实例的**引用**，而非数据副本。
+- 丢弃物品（`DropItem`）会在玩家位置（X 轴 +1）生成一个携带 `Rigidbody2D` 和 `BoxCollider2D` 的世界对象。
 
-#### ItemSlotView
-Individual item slot UI component.
-
-**Slot Types:**
-- `Inventory`: Regular inventory slots
-- `HotBar`: Quick access hotbar slots
-
-**Interactions:**
-- **Left Click**: Select item / Use consumable
-- **Right Click**: Drop one item into game world
-- **Drag**: Move items between slots
-
-#### ItemDragHandler
-Handles drag-and-drop operations.
-
-**Features:**
-- Visual feedback during drag
-- Automatic slot detection
-- Hotbar-inventory interaction
-- Canvas-based positioning
-
-#### SlotsScrollView
-Virtual scrolling system for efficient UI rendering.
-
-**Performance Features:**
-- Object pooling for slot reuse
-- Dynamic content sizing
-- Only renders visible slots
-- Configurable grid layout
-
-#### ItemDataSort
-Sorting system with multiple criteria.
-
-**Sort Options:**
-- Default (pickup order)
-- Quantity
-- Rarity
-- Type
-- Name
-
-**Sort Orders:**
-- Ascending
-- Descending
-
-## Data Structures
-
-### ItemData
-Runtime item instance data.
-
-```csharp
-public class ItemData
-{
-    public ItemScriptableObject itemSo;
-    public int storageItemQuantity;
-    public bool isFull;
-}
-```
-
-### ItemScriptableObject (Referenced)
-
-Define items using ScriptableObjects with properties:
-- Item name, description, sprite
-- Item type (Weapon, Consumable, Material, Other)
-- Item rarity (Common, Valuable, Rare)
-- Max stack size
-
-## Setup Instructions
-
-### 1. Scene Setup
-1. Create a Canvas with `InventoryManager` component
-2. Assign UI references:
-   - Scroll view container
-   - Item info panel (name, description, image)
-   - Category buttons
-   - Sort dropdown and button
-
-### 2. Hotbar Setup
-1. Create hotbar UI with 8 slot objects
-2. Add `HotBarManager` component
-3. Assign `ItemSlotView` components to hotbar slots
-4. Set each slot's `slotType` to `HotBar`
-5. Set `hotBarIndex` (0-7) for each slot
-
-### 3. Scroll View Setup
-1. Create ScrollRect with `SlotsScrollView` component
-2. Configure grid settings:
-   - Column count
-   - Cell size
-   - Spacing
-   - Padding
-3. Assign slot prefab
-
-### 4. Drag Handler Setup
-1. Add `ItemDragHandler` to Canvas
-2. Assign canvas reference
-3. Create drag item prefab (Image component required)
-
-### 5. Item Slot Prefab
-Create prefab with:
-- `ItemSlotView` component
-- Image component (item sprite)
-- TextMeshPro (quantity display)
-- Selected panel GameObject
-- Default slot sprite
-
-### 6. Item Pickup
-Add `Item` component to world items:
-```csharp
-public class Item : MonoBehaviour
-{
-    public int quantity;
-    public ItemScriptableObject itemSo;
-}
-```
-
-## Usage Examples
-
-### Adding Items Programmatically
-```csharp
-// Add 5 health potions
-ItemScriptableObject healthPotion = // your item SO
-int remaining = InventoryManager.Instance.AddItem(healthPotion, 5);
-```
-
-### Adding Items to Hotbar
-```csharp
-// Add item to hotbar slot 0
-ItemData itemData = // your item data
-HotBarManager.Instance.AddToHotBar(itemData, 0);
-```
-
-### Updating Display
-```csharp
-// Refresh inventory display
-InventoryManager.Instance.UpdateCurrentDataContainer();
-
-// Refresh hotbar display
-HotBarManager.Instance.RefreshDisplay();
-```
-
-## Configuration
-
-### Inventory Settings
-- **Default Capacity**: 30 items per category (modifiable in `ItemDataContainer`)
-- **Hotbar Slots**: 8 slots (hardcoded in `HotBarManager`)
-
-### Scroll View Settings
-- **Column Count**: Configurable grid columns
-- **Cell Size**: Individual slot dimensions
-- **Spacing**: Gap between slots
-- **Padding**: Container margins
-
-### Keybindings
-- **E Key**: Toggle inventory menu (modifiable in `InventoryManager.Update()`)
-
-## Technical Notes
-
-### Performance Optimizations
-1. **Object Pooling**: Slots are pooled and reused in scroll view
-2. **Virtual Scrolling**: Only visible slots are rendered
-3. **HashSet Lookup**: Fast hotbar item detection using HashSet
-4. **Filtered Display**: Hotbar items excluded from inventory view
-
-### Item Stacking Logic
-- Items stack automatically when picked up
-- Full stacks are marked with `isFull` flag
-- Overflow items create new stacks or return to world
-
-### Hotbar-Inventory Sync
-- Hotbar items are excluded from main inventory display
-- Items can be dragged between hotbar and inventory
-- Removing from hotbar returns items to inventory view
-
-## Dependencies
-
-### Required Unity Packages
-- TextMeshPro
-- Unity UI
-
-### Required Namespaces
-```csharp
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using TMPro;
-using System.Collections.Generic;
-```
-
-## Extending the System
-
-### Adding New Item Categories
-1. Add enum value to `ItemScriptableObject.ItemType`
-2. Create container in `InventoryManager.Awake()`
-3. Add category button to UI
-4. Update button registration logic
-
-### Custom Item Actions
-Override `UseItem()` in `ItemSlotView`:
-```csharp
-private bool UseItem()
-{
-    // Custom logic based on item type
-    switch (currentData.itemSo.itemType)
-    {
-        case ItemScriptableObject.ItemType.Consumable:
-            // Consume logic
-            break;
-        // Add more cases
-    }
-}
-```
-
-### Modifying Sort Criteria
-Add new sort type to `ItemSortType` enum and implement in `ItemDataSort.DataListSort()`.
-
-## Known Limitations
-
-1. Item quantities cannot be split manually (only drop one at a time)
-2. Hotbar size is fixed at 8 slots
-3. No item comparison or tooltip system
-4. Item world objects require 2D physics setup
-
-## License
-
-MIT
