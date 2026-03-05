@@ -55,9 +55,14 @@ namespace Model
             itemMaxSuperposition = 0;
             StorageItemQuantity = 0;
             ItemSo = null;
-            OnDataChanged?.Invoke(this);
+            //OnDataChanged?.Invoke(this);
+            Dispose();
         }
-    
+
+        private void Dispose()
+        {
+            OnDataChanged = null;
+        }
         public bool IsEmpty()
         {
             return StorageItemQuantity <= 0 || ItemSo == null;

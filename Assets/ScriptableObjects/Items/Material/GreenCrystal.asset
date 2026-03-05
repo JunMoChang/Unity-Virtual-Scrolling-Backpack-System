@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: GreenCrystal
   itemType: 3
   itemQuantity: 1
-  itemMaxSuperposition: 20
+  itemMaxSuperposition: 10
   itemRarity: 1
   itemSprite: {fileID: 21300000, guid: f5e782f91d7c7a840940bcfe921e67e6, type: 3}
   itemDescription: It is a valuable Green crystal.

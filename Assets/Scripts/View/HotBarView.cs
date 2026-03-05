@@ -36,6 +36,7 @@ namespace View
             RefreshDisplay();
         }
         
+        
         private void OnSlotChanged(int slotIndex, ItemDataModel newData)
         {
             if (slotIndex >= 0 && slotIndex < hotBarSlots.Length)

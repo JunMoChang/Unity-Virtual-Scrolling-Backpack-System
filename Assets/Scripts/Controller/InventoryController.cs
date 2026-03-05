@@ -7,6 +7,7 @@ namespace Controller
 {
     public class InventoryController : MonoBehaviour
     {
+        public static InventoryController Instance { get; private set; }
         [Header("InventoryView")]
         [SerializeField] private InventoryView inventoryView;
     
@@ -25,6 +26,12 @@ namespace Controller
     
         private ItemSlotView currentSelectedSlot;
 
+        
+        private void Start()
+        { 
+            if (Instance == null)  Instance = this;
+            inventoryView.SetPanelActive();
+        }
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.E))

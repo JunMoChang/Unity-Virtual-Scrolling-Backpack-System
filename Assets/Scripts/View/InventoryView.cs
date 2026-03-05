@@ -52,9 +52,9 @@ namespace View
                 hotBarModel.OnSlotChanged += OnHotBarChanged;
             }
         }
-        private void OnInventoryChanged(InventoryModel model, ItemScriptableObject.ItemType itemType)
+        private void OnInventoryChanged(InventoryModel model, ItemScriptableObject.ItemType categoryType)
         {
-            if (itemType != CurrentCategoryType && CurrentCategoryType != ItemScriptableObject.ItemType.All) return;
+            if (categoryType != CurrentCategoryType && CurrentCategoryType != ItemScriptableObject.ItemType.All) return;
             
             RefreshDisplay();
         }
@@ -67,7 +67,7 @@ namespace View
             IReadOnlyList<ItemDataModel> items = inventoryModel.GetItemsByType(CurrentCategoryType);
             IReadOnlyList<ItemDataModel> filteredItems = FilterHotBarItems(items);
                         
-            scrollView.SetData(filteredItems, inventoryModel.DefaultCapacity);
+            scrollView.SetData(filteredItems, inventoryModel.GetItemCapacity(CurrentCategoryType));
         }
     
         /// <summary>

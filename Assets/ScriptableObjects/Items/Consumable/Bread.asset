@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Bread
   itemType: 2
   itemQuantity: 1
-  itemMaxSuperposition: 30
+  itemMaxSuperposition: 25
   itemRarity: 0
   itemSprite: {fileID: 21300000, guid: 28b19d7e8fcf07d46805d294f519f9cd, type: 3}
   itemDescription: It is a bread, can restore abundant heath.

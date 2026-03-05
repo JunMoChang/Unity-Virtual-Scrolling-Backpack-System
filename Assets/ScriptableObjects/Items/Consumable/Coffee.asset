@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Coffee
   itemType: 2
   itemQuantity: 1
-  itemMaxSuperposition: 50
+  itemMaxSuperposition: 20
   itemRarity: 0
   itemSprite: {fileID: 21300000, guid: 4128b174f7a57874f8768cf5c45dbb81, type: 3}
   itemDescription: It is a cofee, can restore little heath.

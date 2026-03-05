@@ -8,6 +8,7 @@ namespace Model
     public class InventoryModel
     {
         private readonly Dictionary<ItemScriptableObject.ItemType, List<ItemDataModel>> itemsDataDic;
+        private readonly Dictionary<ItemScriptableObject.ItemType, int> itemsDataMaxCapacityDic;
         private readonly List<ItemDataModel> allItemsCache;
         
         public int DefaultCapacity { get; private set; } = 50;
@@ -20,12 +21,16 @@ namespace Model
             Array types = Enum.GetValues(typeof(ItemScriptableObject.ItemType));
             
             itemsDataDic = new Dictionary<ItemScriptableObject.ItemType, List<ItemDataModel>>(types.Length - 1);//排除All分类
-        
+            itemsDataMaxCapacityDic =  new Dictionary<ItemScriptableObject.ItemType, int>(itemsDataDic.Count);
             foreach (ItemScriptableObject.ItemType type in types)
             {
-                if(type != ItemScriptableObject.ItemType.All)
+                if (type != ItemScriptableObject.ItemType.All)
+                {
+                    itemsDataMaxCapacityDic.Add(type, DefaultCapacity);
                     itemsDataDic.Add(type, new List<ItemDataModel>(DefaultCapacity));
+                }
             }
+            itemsDataMaxCapacityDic.Add(ItemScriptableObject.ItemType.All, DefaultCapacity);
             allItemsCache = new List<ItemDataModel>(DefaultCapacity);
         }
     
@@ -42,8 +47,9 @@ namespace Model
                     quantity = data.AddQuantity(quantity);
                 }
             }
-        
-            while (quantity > 0 && dataList.Count < DefaultCapacity)
+            
+            int maxCapacity = GetItemCapacity(itemSo.itemType);
+            while (quantity > 0 && dataList.Count < maxCapacity)
             {
                 ItemDataModel newItem = new ItemDataModel();
                 quantity = newItem.AddNewData(itemSo, quantity);
@@ -61,7 +67,6 @@ namespace Model
             {
                 if (item.DecreaseQuantity() <= 0)
                 {
-                    NotifyInventoryChanged(ItemScriptableObject.ItemType.Consumable);
                     RemoveItem(item);
                     item.ClearData();
                 }
@@ -111,6 +116,11 @@ namespace Model
                 foreach (List<ItemDataModel> typeList in itemsDataDic.Values)
                 {
                     allItemsCache.AddRange(typeList);
+                }
+
+                if (allItemsCache.Count > DefaultCapacity)
+                {
+                    itemsDataMaxCapacityDic[ItemScriptableObject.ItemType.All] = allItemsCache.Count;
                 }
             }
         }
@@ -182,15 +192,19 @@ namespace Model
             int extraQuantity = item.DecreaseQuantity();
             if (extraQuantity <= 0)
             {
-                NotifyInventoryChanged(item.ItemSo.itemType);
                 RemoveItem(item);
                 item.ClearData();
             }
         }
-        private void NotifyInventoryChanged(ItemScriptableObject.ItemType itemType, bool isCacheChange = true)
+
+        public int GetItemCapacity(ItemScriptableObject.ItemType categoryType)
+        {
+            return itemsDataMaxCapacityDic[categoryType];
+        }
+        private void NotifyInventoryChanged(ItemScriptableObject.ItemType categoryType, bool isCacheChange = true)
         {
             isAllItemsCacheChange = isCacheChange;
-            OnInventoryChanged?.Invoke(this, itemType);
+            OnInventoryChanged?.Invoke(this, categoryType);
         }
     }
 }
