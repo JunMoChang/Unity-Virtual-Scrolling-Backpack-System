@@ -55,6 +55,7 @@ namespace Model
                 quantity = newItem.AddNewData(itemSo, quantity);
             
                 dataList.Add(newItem);
+                isAllItemsCacheChange = true;
                 NotifyInventoryChanged(itemSo.itemType);
             }
         
@@ -129,6 +130,7 @@ namespace Model
         {
             if (itemsDataDic[item.ItemSo.itemType].Remove(item))
             {
+                isAllItemsCacheChange = true;
                 NotifyInventoryChanged(item.ItemSo.itemType);
             }
         }
@@ -156,23 +158,54 @@ namespace Model
         
             switch (sortType)
             {
-                case ItemSortType.None:
-                    break;
-                case ItemSortType.Quantity:
-                    items.Sort((a, b) => ascending ? a.StorageItemQuantity.CompareTo(b.StorageItemQuantity): b.StorageItemQuantity.CompareTo(a.StorageItemQuantity));
-                    break;
-                case ItemSortType.Rarity:
-                    items.Sort((a, b) => ascending ? a.ItemSo.itemRarity.CompareTo(b.ItemSo.itemRarity) : b.ItemSo.itemRarity.CompareTo(a.ItemSo.itemRarity));
-                    break;
-                case ItemSortType.Type:
-                    items.Sort((a, b) => ascending ? a.ItemSo.itemType.CompareTo(b.ItemSo.itemType) : b.ItemSo.itemType.CompareTo(a.ItemSo.itemType));
-                    break;
                 case ItemSortType.Name:
                     items.Sort((a, b) => ascending ? String.Compare(a.ItemSo.itemName, b.ItemSo.itemName, StringComparison.Ordinal) : String.Compare(b.ItemSo.itemName, a.ItemSo.itemName, StringComparison.Ordinal));
                     break;
+                case ItemSortType.Quantity:
+                    items.Sort((a, b) =>
+                    {
+                        int quantityCompare = ascending
+                            ? a.StorageItemQuantity.CompareTo(b.StorageItemQuantity)
+                            : b.StorageItemQuantity.CompareTo(a.StorageItemQuantity);
+                        if (quantityCompare != 0)
+                            return quantityCompare;
+
+                        return ascending
+                            ? String.Compare(a.ItemSo.itemName, b.ItemSo.itemName, StringComparison.Ordinal)
+                            : String.Compare(b.ItemSo.itemName, a.ItemSo.itemName, StringComparison.Ordinal);
+                    });
+                    break;
+                case ItemSortType.Rarity:
+                    items.Sort((a, b) =>
+                    {
+                        int quantityCompare = ascending
+                            ? a.ItemSo.itemRarity.CompareTo(b.ItemSo.itemRarity)
+                            : a.ItemSo.itemRarity.CompareTo(a.ItemSo.itemRarity);
+                        if (quantityCompare != 0)
+                            return quantityCompare;
+
+                        return ascending
+                            ? String.Compare(a.ItemSo.itemName, b.ItemSo.itemName, StringComparison.Ordinal)
+                            : String.Compare(b.ItemSo.itemName, a.ItemSo.itemName, StringComparison.Ordinal);
+                    });
+                    break;
+                case ItemSortType.Type:
+                    items.Sort((a, b) =>
+                    {
+                        int quantityCompare = ascending
+                            ? a.ItemSo.itemType.CompareTo(b.ItemSo.itemType)
+                            : a.ItemSo.itemType.CompareTo(a.ItemSo.itemType);
+                        if (quantityCompare != 0)
+                            return quantityCompare;
+
+                        return ascending
+                            ? String.Compare(a.ItemSo.itemName, b.ItemSo.itemName, StringComparison.Ordinal)
+                            : String.Compare(b.ItemSo.itemName, a.ItemSo.itemName, StringComparison.Ordinal);
+                    });
+                    break;
             }
 
-            NotifyInventoryChanged(categoryType, false);
+            NotifyInventoryChanged(categoryType);
         }
 
         private void CreateItemInWorld(ItemDataModel item, int quantity)
@@ -201,9 +234,8 @@ namespace Model
         {
             return itemsDataMaxCapacityDic[categoryType];
         }
-        private void NotifyInventoryChanged(ItemScriptableObject.ItemType categoryType, bool isCacheChange = true)
+        private void NotifyInventoryChanged(ItemScriptableObject.ItemType categoryType)
         {
-            isAllItemsCacheChange = isCacheChange;
             OnInventoryChanged?.Invoke(this, categoryType);
         }
     }

@@ -18,7 +18,7 @@ MonoBehaviour:
   itemMaxSuperposition: 1
   itemRarity: 2
   itemSprite: {fileID: 21300000, guid: af50dc4fa7b6d314895d0f8c79adb4a5, type: 3}
-  itemDescription: It is a Sword.
+  itemDescription: It is a rare Sword.
   prefab: {fileID: 0}
   baseState: 0
   amountRecover: 0

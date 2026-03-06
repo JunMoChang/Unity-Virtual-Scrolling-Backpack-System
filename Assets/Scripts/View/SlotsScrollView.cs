@@ -61,7 +61,7 @@ namespace View
         
             SetContentSize(dataContainerCapacity);
         
-            contentRect.anchoredPosition = new Vector2(contentRect.anchoredPosition.x, 0);
+            //contentRect.anchoredPosition = new Vector2(contentRect.anchoredPosition.x, 0);
             lastStartRow = -1;
         
             RefreshVisibleSlots();

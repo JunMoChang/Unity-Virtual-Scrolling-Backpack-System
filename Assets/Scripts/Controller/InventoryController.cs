@@ -69,7 +69,6 @@ namespace Controller
                 "按数量",
                 "按稀有度",
                 "按类型",
-                "按名称"
             };
             sortTypeDropdown.AddOptions(text);
             sortTypeDropdown.onValueChanged.AddListener(ChangeSortType);
