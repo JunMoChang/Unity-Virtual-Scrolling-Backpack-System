@@ -4,6 +4,10 @@
 
 [TOC]
 ---
+### Video demonstration
+
+[bilibili](https://www.bilibili.com/video/BV1zxPWztEDp)
+
 ### Overview
 
 This is a modular **Inventory & HotBar System** built for Unity using the **MVC (Model-View-Controller)** pattern. It supports item storage, categorization, sorting, drag-and-drop between the inventory and hotbar, item usage, and item dropping into the game world.

@@ -12,6 +12,10 @@
 
 ---
 
+### 视频演示
+
+[b站](https://www.bilibili.com/video/BV1zxPWztEDp)
+
 ### 架构说明
 
 系统分为三层：
